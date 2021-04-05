@@ -24,18 +24,23 @@ else
   Dockerfile_tag := '.''$(arch)'
 endif
 
+ifeq ($(arch), s390x)
+     race_flag := ''
+else
+     race_flag := '-race'
+endif
 
 all: presubmit build test
 
 test:
 	@echo ">> running tests"
-	@$(GO) test -short -race $(pkgs)
-	@cd cmd && $(GO) test -short -race $(cmd_pkgs)
+	@$(GO) test -short $(race_flag) $(pkgs)
+	@cd cmd && $(GO) test -short $(race_flag) $(cmd_pkgs)
 
 test-with-libpfm:
 	@echo ">> running tests"
-	@$(GO) test -short -race -tags="libpfm" $(pkgs)
-	@cd cmd && $(GO) test -short -race -tags="libpfm" $(cmd_pkgs)
+	@$(GO) test -short $(race_flag) -tags="libpfm" $(pkgs)
+	@cd cmd && $(GO) test -short $(race_flag) -tags="libpfm" $(cmd_pkgs)
 
 container-test:
 	@echo ">> runinng tests in a container"
@@ -45,7 +50,7 @@ docker-test: container-test
 	@echo "docker-test target is deprecated, use container-test instead"
 
 test-integration:
-	@GO_FLAGS=${$GO_FLAGS:-"-race"} ./build/build.sh
+	@GO_FLAGS=${$GO_FLAGS:-$(race_flag)} ./build/build.sh
 	go test -c github.com/google/cadvisor/integration/tests/api
 	go test -c github.com/google/cadvisor/integration/tests/healthz
 	@./build/integration.sh
