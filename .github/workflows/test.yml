@@ -89,8 +89,7 @@ jobs:
           fetch-depth: 1
           path: go/src/github.com/google/cadvisor
       - name: Enable running multiple architectures
-        run: |
-        - uses: uraimo/run-on-arch-action@v2.0.9
+      - uses: uraimo/run-on-arch-action@v2.0.9
         with:
           architecture: s390x
           distribution: ubuntu18.04
@@ -123,5 +122,4 @@ jobs:
             tar -C /usr/local -xzf /tmp/go.tar.gz
             export PATH="$PATH":/usr/local/go/bin
             set -x
-            cd $GITHUB_WORKSPACE/go/src/github.com/google/cadvisor && source build/config/plain.sh && make test-integration
-            
+            cd $GITHUB_WORKSPACE/go/src/github.com/google/cadvisor && source build/config/plain.sh && make test-integration          
